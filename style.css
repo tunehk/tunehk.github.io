@@ -83,6 +83,9 @@ h1 {
   font-size: 1.1rem;
   letter-spacing: 0.3em;
   margin-bottom: 1.8rem;
+
+  font-family: "Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji",sans-serif;
+  font-variant-emoji: emoji;
 }
 
 /* ── About Page ── */
