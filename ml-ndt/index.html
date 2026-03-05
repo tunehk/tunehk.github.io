@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ML-NDT · Tuneh Knott</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #fafaf8;
+      --text: #1a1a1a;
+      --muted: #6b6b6b;
+      --accent: #c0392b;
+      --accent-light: #e74c3c;
+      --border: #e0ddd8;
+      --card-bg: #fff;
+      --code-bg: #f5f3ef;
+      --navy: #1a1a2e;
+      --status-green: #27ae60;
+      --status-yellow: #f39c12;
+      --status-blue: #2980b9;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1.5rem 2rem;
+      font-size: 0.95rem;
+      border-bottom: 1px solid var(--border);
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    nav a:hover, nav a.nav-active {
+      color: var(--text);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 3.5rem 2rem 2rem;
+    }
+    .hero h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 0.5rem;
+    }
+    .hero h1 span {
+      color: var(--accent);
+    }
+    .hero .subtitle {
+      font-size: 1.15rem;
+      color: var(--muted);
+      font-style: italic;
+      margin-bottom: 1.5rem;
+    }
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 500;
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      background: #fef3cd;
+      color: #856404;
+      border: 1px solid #f0e0a0;
+    }
+    .status-badge::before {
+      content: '';
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--status-yellow);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ── MAIN CONTENT ── */
+    main {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 2rem 4rem;
+    }
+
+    section {
+      margin-bottom: 3rem;
+    }
+    section h2 {
+      font-size: 1.35rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      padding-bottom: 0.4rem;
+      border-bottom: 2px solid var(--accent);
+      display: inline-block;
+    }
+    section p {
+      margin-bottom: 1rem;
+      max-width: 680px;
+    }
+
+    /* ── OVERVIEW GRID ── */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+    .overview-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+    }
+    .overview-card .card-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 0.35rem;
+    }
+    .overview-card .card-value {
+      font-size: 1.05rem;
+      font-weight: 600;
+    }
+    .overview-card .card-detail {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 0.2rem;
+    }
+
+    /* ── PIPELINE DIAGRAM ── */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 1.5rem 0;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+    .pipe-step {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.9rem 1.1rem;
+      text-align: center;
+      min-width: 130px;
+      flex-shrink: 0;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .pipe-step:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+    .pipe-step .step-icon {
+      font-size: 1.5rem;
+      margin-bottom: 0.3rem;
+    }
+    .pipe-step .step-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .pipe-step .step-detail {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+    .pipe-arrow {
+      font-size: 1.2rem;
+      color: var(--muted);
+      padding: 0 0.3rem;
+      flex-shrink: 0;
+    }
+
+    .pipe-step.done { border-color: var(--status-green); background: #f0faf4; }
+    .pipe-step.active { border-color: var(--status-yellow); background: #fffdf0; }
+    .pipe-step.upcoming { border-color: var(--border); opacity: 0.7; }
+
+    /* ── RESULTS TABLE ── */
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.92rem;
+    }
+    .results-table th {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      text-align: left;
+      padding: 0.6rem 1rem;
+      border-bottom: 2px solid var(--border);
+    }
+    .results-table td {
+      padding: 0.6rem 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .results-table tr:last-child td {
+      border-bottom: none;
+    }
+    .metric-highlight {
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    /* ── FIGURES ── */
+    .project-figure {
+      margin: 1.5rem 0;
+    }
+    .project-figure img {
+      width: 100%;
+      max-width: 640px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+    }
+    .project-figure.full-width img {
+      max-width: 100%;
+    }
+    .project-figure figcaption {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+
+    /* ── SUBSECTION HEADS ── */
+    h3.subsection-head {
+      font-size: 1.08rem;
+      font-weight: 600;
+      margin-top: 2rem;
+      margin-bottom: 0.6rem;
+      color: var(--text);
+    }
+
+    /* ── ARCHITECTURE DIAGRAM ── */
+    .arch-diagram {
+      margin: 1.25rem 0;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+    .arch-row {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .arch-block {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.7rem 1rem;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      min-width: 110px;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .arch-block .arch-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 500;
+    }
+    .arch-block .arch-spec {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+    .arch-block.input { border-color: var(--status-blue); background: #f0f6fa; }
+    .arch-block.conv { border-color: #8e44ad; background: #f9f0fc; }
+    .arch-block.dense { border-color: var(--status-yellow); background: #fffdf0; }
+    .arch-block.output { border-color: var(--status-green); background: #f0faf4; }
+    .arch-arrow {
+      font-size: 1.1rem;
+      color: var(--muted);
+      padding: 0 0.25rem;
+      flex-shrink: 0;
+    }
+
+    /* ── DATA FORMAT GRID ── */
+    .data-format-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin: 1rem 0 1.5rem;
+    }
+    .format-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.9rem 1.1rem;
+    }
+    .format-ext {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      font-weight: 500;
+      background: var(--navy);
+      color: #e0e0e0;
+      padding: 0.15rem 0.5rem;
+      border-radius: 3px;
+      margin-bottom: 0.4rem;
+    }
+    .format-desc {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.5;
+      margin-top: 0.35rem;
+    }
+
+    /* ── CODE BLOCKS ── */
+    .code-block {
+      background: var(--navy);
+      color: #e0e0e0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      line-height: 1.65;
+      padding: 1.25rem 1.5rem;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 1rem 0;
+    }
+    .code-block .comment { color: #6a9955; }
+    .code-block .keyword { color: #569cd6; }
+    .code-block .string { color: #ce9178; }
+    .code-block .number { color: #b5cea8; }
+    .code-block .fn { color: #dcdcaa; }
+
+    /* ── TECH STACK ── */
+    .tech-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+    .tech-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.3rem 0.7rem;
+      border-radius: 4px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+
+    /* ── ROADMAP ── */
+    .roadmap {
+      position: relative;
+      padding-left: 2rem;
+      margin: 1.5rem 0;
+    }
+    .roadmap::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background: var(--border);
+    }
+    .roadmap-item {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    .roadmap-item::before {
+      content: '';
+      position: absolute;
+      left: -2rem;
+      top: 6px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      background: var(--bg);
+    }
+    .roadmap-item.done::before {
+      background: var(--status-green);
+      border-color: var(--status-green);
+    }
+    .roadmap-item.active::before {
+      background: var(--status-yellow);
+      border-color: var(--status-yellow);
+      box-shadow: 0 0 0 3px rgba(243, 156, 18, 0.2);
+    }
+    .roadmap-item.upcoming::before {
+      background: var(--bg);
+      border-color: var(--border);
+    }
+    .roadmap-label {
+      font-weight: 600;
+      font-size: 0.98rem;
+    }
+    .roadmap-desc {
+      font-size: 0.88rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+
+    /* ── KEY INSIGHT CALLOUT ── */
+    .callout {
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.25rem;
+      background: #fdf6f5;
+      border-radius: 0 6px 6px 0;
+      margin: 1.5rem 0;
+      font-size: 0.95rem;
+    }
+    .callout strong {
+      color: var(--accent);
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    footer a {
+      color: var(--text);
+      text-decoration: none;
+    }
+    footer a:hover { text-decoration: underline; }
+
+    @media (max-width: 640px) {
+      .hero h1 { font-size: 1.8rem; }
+      .overview-grid { grid-template-columns: 1fr; }
+      .data-format-grid { grid-template-columns: 1fr; }
+      .pipeline { flex-wrap: wrap; gap: 0.5rem; }
+      .pipe-arrow { display: none; }
+      .arch-row { flex-wrap: wrap; gap: 0.4rem; }
+      .arch-arrow { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <nav>
+    <a href="../">About</a>
+    <a href="../projects.html">Projects</a>
+    <a href="./" class="nav-active">ML-NDT</a>
+  </nav>
+
+  <!-- ── HERO ── -->
+  <header class="hero">
+    <h1>Machine Learning for <span>Non-Destructive Testing</span></h1>
+    <p class="subtitle">CNN-based automated crack detection in ultrasonic scan data, with Grad-CAM interpretability and edge deployment on NVIDIA Jetson Orin Nano.</p>
+    <span class="status-badge">In Progress — Spring 2026</span>
+  </header>
+
+  <main>
+
+    <!-- ── PROJECT OVERVIEW ── -->
+    <section>
+      <h2>Overview</h2>
+      <p>
+        This project develops an interactive diagnostic system that applies machine learning to ultrasonic non-destructive testing (NDT). NDT is widely used across engineering fields to inspect materials and structures for defects without damaging them, but traditional ultrasonic inspection relies heavily on expert interpretation of scan data. This manual process can introduce variability in results and uncertainty in defect classification.
+      </p>
+      <p>
+        Our system aims to reduce this subjectivity by combining ultrasonic sensing, signal processing, and deep learning into a single automated diagnostic workflow. Ultrasonic pulses are transmitted into a test specimen and the resulting signals are captured by an array of receivers arranged in a circular ring. From the continuous amplitude data collected by each receiver, the system constructs a spatial scan representation of the inspected material. A convolutional neural network (CNN) then analyzes this scan to classify potential defects and estimate the model's confidence in its prediction.
+      </p>
+      <p>
+        The project emphasizes trustworthy AI for safety-critical applications. In inspection tasks, failing to detect a real defect can have severe consequences, so the system is designed to prioritize high recall and transparent decision-making. Alongside classification outputs, interpretability techniques such as Grad-CAM are used to highlight which regions of the ultrasonic data influenced the model's decision, enabling engineers to better understand and verify the results.
+      </p>
+      <p>
+        This work is being developed as part of a multidisciplinary capstone project focused on building a standalone diagnostic terminal that integrates sensing hardware, machine learning models, and an interactive interface. The long-term goal is to demonstrate a proof-of-concept tool capable of improving inspection consistency, reducing reliance on manual interpretation, and supporting engineers with more reliable and explainable defect detection.
+      </p>
+      <p>
+        The figure below illustrates the current high-fidelity prototype of the ultrasonic scanning system. The design consists of a circular sensor array with alternating transmitters (TX) and receivers (RX) arranged around a 30 cm diameter ring. During operation, transmitters independently emit ultrasonic pulses while all receivers continuously capture the resulting signals. The sensors have been modified to output continuous analog amplitude data rather than simple time-of-flight readings, providing a richer signal for analysis. These signals are routed through a shared power, ground, and data architecture and processed by an Arduino Mega control board.  This hardware configuration serves as the foundation for the data acquisition pipeline feeding the machine learning model described below.
+      </p>
+    </section>
+
+    <figure class="project-figure" style="text-align: center;">
+      <img src="images/sensor-ring.png" alt="Circular ultrasonic sensor array with TX/RX transducers on a 30cm ring connected to Arduino Mega" style="max-width: 560px;" />
+      <figcaption>Circular sensor array — TX/RX transducers on a 30 cm diameter ring, controlled by an Arduino Mega.</figcaption>
+    </figure>
+
+    <!-- ── PIPELINE ── -->
+    <section>
+      <h2>System Pipeline</h2>
+      <p>The end-to-end architecture from physical scan to on-screen defect diagnosis:</p>
+
+      <div class="pipeline">
+        <div class="pipe-step done">
+          <div class="step-icon">📡</div>
+          <div class="step-label">Scan</div>
+          <div class="step-detail">Ultrasonic data acquisition</div>
+        </div>
+        <span class="pipe-arrow">→</span>
+        <div class="pipe-step done">
+          <div class="step-icon">🔄</div>
+          <div class="step-label">Preprocess</div>
+          <div class="step-detail">Normalize → 64×64</div>
+        </div>
+        <span class="pipe-arrow">→</span>
+        <div class="pipe-step done">
+          <div class="step-icon">🧠</div>
+          <div class="step-label">CNN</div>
+          <div class="step-detail">Binary classification</div>
+        </div>
+        <span class="pipe-arrow">→</span>
+        <div class="pipe-step done">
+          <div class="step-icon">🔍</div>
+          <div class="step-label">Grad-CAM</div>
+          <div class="step-detail">Attention heatmap</div>
+        </div>
+        <span class="pipe-arrow">→</span>
+        <div class="pipe-step active">
+          <div class="step-icon">⚡</div>
+          <div class="step-label">Optimize</div>
+          <div class="step-detail">TensorRT on Jetson</div>
+        </div>
+        <span class="pipe-arrow">→</span>
+        <div class="pipe-step upcoming">
+          <div class="step-icon">🖥️</div>
+          <div class="step-label">Display</div>
+          <div class="step-detail">PyQt5 touchscreen GUI</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── BASELINE RESULTS ── -->
+    <section>
+      <h2>Baseline Results — Steel Pipe Dataset</h2>
+      <p>
+        Initial model development used the <em>Virkkunen et al.</em> phased-array ultrasonic dataset: 3 real thermal fatigue cracks (1.6–8.6 mm) on 316L stainless steel pipe, augmented to ~20,000 training samples using virtual flaw technology.
+      </p>
+
+      <table class="results-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Default (τ = 0.50)</th>
+            <th>Optimized (τ = 0.70)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Recall (Detection Rate)</td>
+            <td class="metric-highlight">97.3%</td>
+            <td>94.6%</td>
+          </tr>
+          <tr>
+            <td>Precision</td>
+            <td>68.4%</td>
+            <td class="metric-highlight">~88%</td>
+          </tr>
+          <tr>
+            <td>Decision Threshold</td>
+            <td>0.50</td>
+            <td>0.68</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>Key insight:</strong> Statistical analysis was conducted to optimize the decision threshold from a default value of 0.50 to an optimized value of 0.68, dramatically improved precision (68% → 88%) while only sacrificing ~3% recall. This threshold tuning was essential, reducing false positives by more than half.
+      </div>
+    </section>
+
+    <!-- ── ML FRAMEWORK DEEP DIVE ── -->
+    <section>
+      <h2>Software &amp; ML Framework</h2>
+      <p>
+        The software side of this project is where I made most of my individual contributions. I'm responsible for the full ML pipeline: data loading and preprocessing, model architecture, training and evaluation, threshold optimization, interpretability, and deployment packaging. Below is a walkthrough of the key technical decisions and the reasoning behind each.
+      </p>
+
+      <h3 class="subsection-head">Why a CNN?</h3>
+      <p>
+        Ultrasonic scan data, once formatted as a 2D amplitude image, is fundamentally a spatial pattern recognition problem. Convolutional neural networks are the natural fit because they learn hierarchical spatial features automatically, without requiring hand-crafted signal processing features. WHile traditional NDT analysis relies on an inspector manually reading scan images, a CNN automates that visual reasoning.
+      </p>
+      <p>
+        Alternative approaches like random forests or SVMs would require manual feature extraction (peak amplitude, signal width, frequency content, etc.), which introduces domain assumptions and limits what the model can learn. A CNN operating on raw normalized pixel data sidesteps this as the network discovers which features matter during training.
+      </p>
+
+      <h3 class="subsection-head">Proof-of-Concept — Baseline Model</h3>
+      <p>
+        Before building the pipeline for our own hardware, we validated the ML approach using the Virkkunen et al. phased-array ultrasonic dataset, a dataset comprised of 3 real thermal fatigue cracks on 316L stainless steel, augmented to ~20,000 training samples via virtual flaw technology. This baseline model (a VGG-inspired CNN with binary cross-entropy loss and sigmoid output) achieved 97.3% recall and, after threshold optimization, ~88% precision. The baseline confirmed that the core approach of CNN classification and interpretability enabled with Grad-CAM works and gave us a validated training/evaluation pipeline to build on. The details of the baseline results are in the section above.
+      </p>
+
+      <h3 class="subsection-head">Our Data Pipeline — Ring Sensor to CNN Input</h3>
+      <p>
+        The real engineering challenge is adapting this approach to work with our own hardware. The baseline model consumed pre-formatted 256×256 phased-array images. Our system produces something fundamentally different: continuous analog amplitude signals from multiple TX/RX sensor pairs arranged in a circular ring. Turning that into a CNN-ready image requires a multi-step data pipeline.
+      </p>
+      <p>
+        During a scan, each transmitter fires independently while all receivers record continuous amplitude data. This process produces a three-dimensional data array in which, for each transmitter firing, every receiver records a time-series waveform of the returning ultrasonic signal. The reconstruction step maps this sensor-space data back into physical space: each TX/RX pair's signal carries information about the material along the acoustic path between those two sensors, and by combining all pairs, we build a 2D spatial image of the scan area. The circular ring produces a Ø 0.54 m scan field; we extract the largest inscribed square (0.385 m side) and discretize it to a 64×64 pixel grid. Z-score normalization ensures the model isn't biased by absolute amplitude variations between scans.
+      </p>
+
+      <!-- <div class="code-block">
+<span class="comment"># Our data pipeline: ring sensor → reconstructed image → CNN</span>
+
+<span class="keyword">import</span> numpy <span class="keyword">as</span> np
+<span class="keyword">from</span> skimage.transform <span class="keyword">import</span> resize
+
+<span class="comment"># Raw signals from circular ring: (n_tx, n_rx, n_samples)</span>
+signals = np.<span class="fn">load</span>(<span class="string">"ring_scan.npy"</span>)
+
+<span class="comment"># Reconstruct spatial image from TX/RX amplitude data</span>
+circular = <span class="fn">reconstruct_from_ring</span>(signals, ring_diameter=<span class="number">0.54</span>)
+
+<span class="comment"># Extract inscribed square, discretize, normalize</span>
+square = <span class="fn">extract_inscribed_square</span>(circular)
+img = <span class="fn">resize</span>(square, (<span class="number">64</span>, <span class="number">64</span>))
+img_norm = (img - img.<span class="fn">mean</span>()) / img.<span class="fn">std</span>()
+
+prediction, confidence = model.<span class="fn">predict</span>(img_norm)
+      </div> -->
+
+      <p>
+        The reconstruction algorithm is the most technically involved piece of new software. It needs to account for the ring geometry, the number and positions of TX/RX sensors, and assumptions about wave propagation through PLA. This is active development work and represents the primary software challenge in the current project phase.
+      </p>
+
+      <h3 class="subsection-head">Programmatic Labeling</h3>
+      <p>
+        One of the advantages of scanning 3D-printed PLA specimens is that defects are designed into the part, we control the exact size, shape, and position of every void, hole, or delamination. This means ground truth labels can be generated programmatically from the CAD file rather than requiring manual annotation by a human inspector. For each scan, we know precisely where the defect is (or that the specimen is clean), which eliminates labeling ambiguity and scales to large datasets without human bottleneck.
+      </p>
+
+      <h3 class="subsection-head">Data Augmentation Strategy</h3>
+      <p>
+        The baseline model's virtual flaw augmentation, the process of extracting real crack signals and implanting them into clean scans at varied position, demonstrated that domain-aware augmentation can yield quality results. We plan to apply the same principle to our PLA data: extract defect signatures from scans of known-defective specimens and embed them into clean scans at varied locations. Combined with programmatic labeling, a small number of physical scans (10–20) should yield 500+ usable training samples.
+      </p>
+
+      <h3 class="subsection-head">Model Architecture Adaptation</h3>
+      <p>
+        The baseline VGG-inspired architecture serves as a starting point, but the input changes significantly with out hardware. We produce 64×64 pixel arrays from our reconstructed ring data compared with the 256×256 original phased-array images. The network needs fewer parameters at lower resolution, so we intend to adapt to a lighter architecture with fewer convolutional filters and shallower pooling to match the reduced input dimensionality. The 7×1 max pooling layer from the baseline (which extracted amplitude envelopes from raw oscillating waveforms) may not be needed since our reconstruction step already produces amplitude-domain data. These architectural decisions will be finalized once we have real scan data to validate against.
+      </p>
+
+      <h3 class="subsection-head">Threshold Optimization</h3>
+      <p>
+        The CNN's sigmoid output produces a continuous probability, but deployment requires the output of a binary decision. The optimization process sweeps thresholds from 0.0 to 1.0 and evaluates precision, recall, F1, and false positive rate at each point. In our safety-critical NDT, recall is the priority as missing a real crack can be dangerous, but precision must be high enough that operators trust the system.
+      </p>
+      <!-- <p>
+        This process will need to be re-run from scratch once the model is retrained on PLA data, since the score distributions will shift with different sensor physics and materials. The methodology transfers directly; the specific threshold value does not.
+      </p> -->
+
+      <h3 class="subsection-head">Grad-CAM Interpretability</h3>
+      <p>
+        For a safety-critical application, a prediction alone isn't sufficient, the operator also needs to understand <em>why</em> the model flagged a scan. Grad-CAM (Gradient-weighted Class Activation Mapping) computes which spatial regions of the input most influenced the model's decision, then overlays that as a heatmap on the original scan. We intend to display this heatmap alongside the original scan on our Graphical User Interface (GUI). This implementation will also to not only confirm whether there is a defect but provide a guide as to where the defect might be located.
+      </p>
+      <!-- <p>
+        During baseline development, Grad-CAM proved its value beyond just explainability — it caught a failure mode where the CNN was attending to scan boundary artifacts rather than actual defects, despite reporting high accuracy. This kind of silent failure is exactly what makes black-box models dangerous in safety-critical contexts. In our deployed system, Grad-CAM provides the audit trail that enables an engineer to trust or override the model's recommendation.
+      </p> -->
+
+      <div class="callout">
+        <strong>Interpretability as a requirement:</strong> In NDT, model predictions can inform decisions about structural integrity, in critical infrastructures such as bridges, pipelines, and pressure vessels. A black-box "defect detected" output is insufficient for the engineers making those decisions. Grad-CAM provides an audit trail, dispalying what the model saw, and where it looked.
+      </div>
+    </section>
+
+    <!-- ── THE PIVOT ── -->
+    <section>
+      <h2>Hardware Pivot — PLA Specimens + HC-SR04</h2>
+      <p>
+        The original planned design used a custom 3×3 phased-array transducer board. When procurement challenges made this infeasible within the project timeline, the team pivoted to HC-SR04 ultrasonic sensors (40 kHz) arranged in a circular ring, scanning 3D-printed PLA specimens.
+      </p>
+      <p>
+        The HC-SR04 sensors have been modified ("jailbroken") to output continuous analog readings rather than just time-of-flight values, which gives us a richer signal with constant listening receivers and independently controlled transmissions. The circular ring produces a 0.54 m diameter scan area at 0.05m distance; a 0.385 m square is extracted from within that and discretized into a 64×64 pixel image for the CNN.
+      </p>
+      <!-- <p>
+        This pivot is actually advantageous from an ML perspective: 3D-printed defects have known geometry, enabling programmatic ground truth labeling instead of manual annotation. The controlled defect dimensions (holes, voids, delaminations) create cleaner, more repeatable training data.
+      </p> -->
+
+      <figure class="project-figure full-width">
+        <img src="images/initial-prototype.png" alt="Initial CAD prototype, curved rectangular face designed to hold a 3x3 phased-array of transducers" />
+        <figcaption>The initial CAD prototype for our design, showing a curved rectangular face designed to hold a 3x3 phased-array of transducers</figcaption>
+      </figure>
+
+      <!-- <div class="overview-grid">
+        <div class="overview-card">
+          <div class="card-label">Sensor</div>
+          <div class="card-value">Modified HC-SR04 @ 40 kHz</div>
+          <div class="card-detail">Jailbroken for continuous analog output, not just ToF</div>
+        </div>
+        <div class="overview-card">
+          <div class="card-label">Specimen</div>
+          <div class="card-value">3D-Printed PLA</div>
+          <div class="card-detail">Controlled defect geometry (≥15mm detectable)</div>
+        </div>
+        <div class="overview-card">
+          <div class="card-label">Scan Geometry</div>
+          <div class="card-value">Ø 0.54 m circle → 0.385 m square</div>
+          <div class="card-detail">Inscribed square extracted and discretized to 64×64 px</div>
+        </div>
+        <div class="overview-card">
+          <div class="card-label">Data Acquisition</div>
+          <div class="card-value">Arduino Mega → CSV</div>
+          <div class="card-detail">Continuous amplitude signals per TX/RX pair</div>
+        </div>
+      </div> -->
+
+    </section>
+
+    <!-- ── GUI ── -->
+    <section>
+      <h2>Detection GUI</h2>
+      <p>
+        A PyQt5 desktop application built for deployment on the Jetson Orin Nano, to be displayed on an attached touchscreen. Three-panel layout displays the raw ultrasonic scan, Grad-CAM attention heatmap, and detection overlay with bounding box. Designed to give the operator both the diagnosis and the model's reasoning at a glance.
+      </p>
+
+      <figure class="project-figure full-width">
+        <img src="images/gui-screenshot.png" alt="ML-NDT Crack Detection GUI showing raw scan, Grad-CAM attention map, and detection overlay panels" />
+        <figcaption>PyQt5 GUI — raw scan, Grad-CAM attention map, and detection overlay with adjustable threshold slider.</figcaption>
+      </figure>
+    </section>
+
+    <!-- ── TECH STACK ── -->
+    <section>
+      <h2>Tech Stack</h2>
+      <div class="tech-tags">
+        <span class="tech-tag">Python</span>
+        <span class="tech-tag">TensorFlow / Keras</span>
+        <span class="tech-tag">TensorRT</span>
+        <span class="tech-tag">Grad-CAM</span>
+        <span class="tech-tag">PyQt5</span>
+        <span class="tech-tag">Plotly</span>
+        <span class="tech-tag">Matplotlib</span>
+        <span class="tech-tag">Jupyter</span>
+        <span class="tech-tag">OpenCV</span>
+        <span class="tech-tag">NumPy</span>
+        <span class="tech-tag">Arduino</span>
+        <span class="tech-tag">NVIDIA Jetson Orin Nano</span>
+        <span class="tech-tag">WSL2 / Ubuntu</span>
+        <span class="tech-tag">PyCharm</span>
+      </div>
+    </section>
+
+    <!-- ── ROADMAP ── -->
+    <section>
+      <h2>Roadmap</h2>
+
+      <div class="roadmap">
+        <div class="roadmap-item done">
+          <div class="roadmap-label">CNN trained on Virkkunen steel pipe dataset</div>
+          <div class="roadmap-desc">97.3% recall with threshold optimization to balance precision.</div>
+        </div>
+        <div class="roadmap-item done">
+          <div class="roadmap-label">Grad-CAM visualization pipeline</div>
+          <div class="roadmap-desc">4-panel analysis: original scan, attention map, ground truth, overlay.</div>
+        </div>
+        <div class="roadmap-item done">
+          <div class="roadmap-label">Jupyter notebook analysis tools</div>
+          <div class="roadmap-desc">Interactive scan visualization, model prediction display, and ROC/confusion matrix generation.</div>
+        </div>
+        <div class="roadmap-item done">
+          <div class="roadmap-label">PyQt5 GUI application</div>
+          <div class="roadmap-desc">Three-panel layout with threshold slider, auto-scan, and dark theme. Tested on WSL2.</div>
+        </div>
+        <div class="roadmap-item active">
+          <div class="roadmap-label">Adapt data pipeline for HC-SR04 + PLA</div>
+          <div class="roadmap-desc">New data loader for our hardware → 64x64 normalized arrays. Programmatic labeling from known defect geometry.</div>
+        </div>
+        <div class="roadmap-item active">
+          <div class="roadmap-label">Collect PLA scan dataset &amp; apply virtual flaw augmentation</div>
+          <div class="roadmap-desc">Target: 10–20 real scans → 500+ augmented training samples.</div>
+        </div>
+        <div class="roadmap-item upcoming">
+          <div class="roadmap-label">Retrain CNN on PLA data &amp; re-optimize threshold</div>
+          <div class="roadmap-desc">Expected initial accuracy 75–85%, improving with dataset growth.</div>
+        </div>
+        <div class="roadmap-item upcoming">
+          <div class="roadmap-label">TensorRT optimization for Jetson Orin Nano</div>
+          <div class="roadmap-desc">The Orin Nano's 40 TOPS provides significant headroom, but TensorRT still may be beneficial for fast response time.</div>
+        </div>
+        <div class="roadmap-item upcoming">
+          <div class="roadmap-label">Full system integration &amp; live demo</div>
+          <div class="roadmap-desc">End-to-end: sensor scan → inference → touchscreen display.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── REFERENCES ── -->
+    <section>
+      <h2>References &amp; Resources</h2>
+      <p>
+        Built on the open-source <a href="https://github.com/iikka-v/ML-NDT" target="_blank" style="color: var(--accent);">ML-NDT framework</a> by Viita et al. (2019), based on the paper
+        <em>"Augmented Ultrasonic Data for Machine Learning"</em> (Virkkunen et al., arXiv:1903.11399). Dataset includes phased-array scans of 316L stainless steel pipe with thermal fatigue cracks.
+      </p>
+    </section>
+
+  </main>
+
+  <footer>
+    <a href="../">← Back to tunehknott.com</a>
+  </footer>
+</body>
+</html>
